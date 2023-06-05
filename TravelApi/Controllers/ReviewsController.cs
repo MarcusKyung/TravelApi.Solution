@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TravelApi.Models;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace TravelApi.Controllers
 {
@@ -17,9 +19,15 @@ namespace TravelApi.Controllers
 
     // GET api/reviews
     [HttpGet]
-    public async Task<List<Review>> Get(string city, string country, int minimumRating)
+    public async Task<List<Review>> Get(string city, string country, string userName, int minimumRating, string byRating)
     {
       IQueryable<Review> query = _db.Reviews.AsQueryable();
+      // how do we query by number of reviews without using another model/database join table?
+
+      if (byRating == "true")
+      {
+        query = query.OrderByDescending(entry => entry.Rating);
+      }
 
       if (city != null)
       {
@@ -29,6 +37,11 @@ namespace TravelApi.Controllers
       if (country != null)
       {
         query = query.Where(entry => entry.Country == country);
+      }
+
+      if (userName != null)
+      {
+        query = query.Where(entry => entry.UserName == userName);
       }
 
       if (minimumRating > 0)
