@@ -19,7 +19,7 @@ namespace TravelApi.Controllers
 
     // GET api/reviews
     [HttpGet]
-    public async Task<List<Review>> Get(string city, string country, string userName, int minimumRating, string byRating, int pageNumber = 1, int pageSize = 100)
+    public async Task<List<Review>> Get(string destination, string city, string country, string userName, int minimumRating, string byRating, int pageNumber, int pageSize)
     {
       IQueryable<Review> query = _db.Reviews.AsQueryable();
       // how do we query by number of reviews without using another model/database join table?
@@ -27,6 +27,11 @@ namespace TravelApi.Controllers
       if (byRating == "true")
       {
         query = query.OrderByDescending(entry => entry.Rating);
+      }
+
+      if (destination != null)
+      {
+        query = query.Where(entry => entry.Destination == destination);
       }
 
       if (city != null)
@@ -49,9 +54,14 @@ namespace TravelApi.Controllers
         query = query.Where(entry => entry.Rating >= minimumRating);
       }
 
-      query.OrderBy(review => review.ReviewId)
-            .Skip((pageNumber - 1) * pageSize)
-            .Take(pageSize); 
+      if (pageNumber > 0 && pageSize > 0)
+      {
+        query = query.Skip((pageNumber - 1) * pageSize).Take(pageSize); 
+      }
+
+      // query = query.OrderBy(review => review.ReviewId)
+      //         .Skip((pageNumber - 1) * pageSize)
+      //         .Take(pageSize); 
 
       return await query.ToListAsync();
     }
@@ -68,6 +78,14 @@ namespace TravelApi.Controllers
       }
 
       return review;
+    }
+
+    [HttpGet("random")]
+    public async Task<ActionResult<Review>> GetRandomReview()
+    {
+      List<Review> reviews = await _db.Reviews.ToListAsync();
+      int random = new Random().Next(reviews.Count);
+      return reviews[random];
     }
 
     // [HttpGet("page")]
