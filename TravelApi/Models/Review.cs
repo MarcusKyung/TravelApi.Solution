@@ -6,9 +6,12 @@ namespace TravelApi.Models
   {
     public int ReviewId { get; set; }
     [Required]
+    public string Destination { get; set; }
+    [Required]
     public string Country { get; set; }
     [Required]
     public string City { get; set; }
+    public string Address { get; set; }
     [Required]
     public string UserName { get; set; }
     [Required]
@@ -16,5 +19,6 @@ namespace TravelApi.Models
     public int Rating { get; set; }
     [Required]
     public string Description { get; set; }
+    public DateTime Date { get; set; }
   }
 }
