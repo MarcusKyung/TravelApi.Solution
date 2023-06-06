@@ -1,12 +1,15 @@
-# _Travel Api_
+# _Travel API_
 
 #### By _**Gareth Grindeland, Joe Wilfong, Marcus Kyung**_
 
-#### _{Brief description of application}_
+#### _API for reviews of travel destinations built with C#, ASP.NET Core, and MySQL_
 
 ## Contents
 * [Description](#description)
 * [Setup & installation](#setupinstallation-requirements)
+* [Endpoints](#endpoints)
+* [Optional Query Parameters](#optional-query-string-parameters)
+* [Example Get Requests](#example-get-requests)
 * [Known-bugs](#known-bugs)
 * [License](#license)
 
@@ -23,40 +26,160 @@
 
 ## Description
 
-_{This is a detailed description of your application. Give as much detail as needed to explain what the application does as well as any other information you want users or other developers to have.}_
+_TravelAPI is an API used to track reviews for travel destinations around the world. The starting database is seeded with data for 20 reviews but the API supports full CRUD functionality to store additional reviews and to edit and delete existing ones. Reviews are queryable by destination, city, country, user, rating, and page number. This project was built using C#, Entity Framework Core, and MySQL._
 
 ## Setup/Installation Requirements
 
-1. _Download project repository from GH to local machine_
+* _Download project repository from GH to your local machine._
+* _Clone this repository to your desktop._
+* _Open your shell (e.g., Terminal or GitBash) and navigate to this project's production directory at ```./TravelAPi.Solution/TravelApi/```._
 
+#### To Configure and Access the Database:
+* _Within the production directory "TravelApi", create a new file called ``appsettings.json``._
+* _Within ```appsettings.json```, put the following code, replacing the "uid" and "pwd" values (in the brackets below) with your own username and password for MySQL. Also replace the "database" value with your desired database name._
+```
+{
+  "ConnectionStrings": {
+      "DefaultConnection": "Server=localhost;Port=3306;database=[DATABASE_NAME];uid=[USERNAME];pwd=[PASSWORD];"
+  }
+}
+```
+* _Run the terminal command ```dotnet ef database update``` to create the initial MySQL database._
 
-_{Leave nothing to chance! You want it to be easy for potential users, employers and collaborators to run your app. Do I need to run a server? How should I set up my databases? Is there other code this application depends on? We recommend deleting the project from your desktop, re-cloning the project from GitHub, and writing down all the steps necessary to get the project working again.}_
+#### To Run the API:
+* _Navigate to this project's production directory named "TravelApi"._
+* _Run ```dotnet watch run``` in the command line to run the API from your local port. This will also open up Swagger UI in your browser. At this point, you can begin making API calls._
+* _To make a test a get request, click on the "Get" reviews route in the Swagger UI, then click the "try it out" button._
+* _Reference the endpoint urls, optional parameters, and example requests listed below. The TravelAPI supports Get, Post, Update, and Delete functionality._
 
 ## Endpoints
-
+```
+GET http://localhost:5000/api/reviews/
+GET http://localhost:5000/api/reviews/{id}
+POST http://localhost:5000/api/reviews/
+PUT http://localhost:5000/api/reviews/{id}
+DELETE http://localhost:5000/api/reviews/{id}
+```
+Note: `{id}` is a variable and it should be replaced with the id number of the review you want to GET, PUT, or DELETE.
 
 ## Optional Query String Parameters
 | Parameter   | Type        |  Required    | Description |
 | ----------- | ----------- | -----------  | ----------- | 
-| Destination | String      |   Required   | Returns reviews with a matching Destination name value |
-| Country     | String      |   Required   | Returns reviews with a matching Country name value     |
-| City        | String      |   Required   | Returns reviews with a matching City name value        |
-| Address     | String      | Not Required | Returns reviews with a matching Address name value     |
-| UserName    | String      |   Required   | Returns reviews with a matching UserName name value    |
-| Rating      | Int         |   Required   | Returns reviews with a matching Rating name value      |
-| Description | String      |   Required   | Returns reviews with a matching Description name value |
-| Date        | DateTime    | Not Required | Returns reviews with a matching Date name value        |
+| Destination | String      |   Required   | Returns reviews with a matching Destination value    |
+| Country     | String      |   Required   | Returns reviews with a matching Country value        |
+| City        | String      |   Required   | Returns reviews with a matching City value           |
+| Address     | String      | Not Required | Returns reviews with a matching Address value        |
+| UserName    | String      |   Required   | Returns reviews with a matching UserName value       |
+| Rating      | Int         |   Required   | Returns reviews with a matching Rating value         |
+| Description | String      |   Required   | Returns reviews with a matching Description value    |
+| Date        | DateTime    | Not Required | Returns reviews with a matching Date value           |
+| byRating    | String      | Not Required | Value of "true" orders the returned list by descending rating |
+| pageNumber  | Int         | Not Required | Returns reviews from the specified page number       |
+| pageSize    | Int         | Not Required | Controls the amount of reviews returned on each page |
+
+## Example Get Requests
+* _To make an Api call for all reviews for destinations in Peru:_
+http://localhost:5000/api/reviews/?country=peru
+``
+[
+    {
+        "reviewId": 7,
+        "destination": "Machu Picchu",
+        "country": "Peru",
+        "city": "Cusco",
+        "address": "789 Inca Trail",
+        "userName": "HistoryBuff2021",
+        "rating": 9,
+        "description": "A mystical ancient city hidden in the mountains. The hike was challenging but rewarding!",
+        "date": "2021-09-02T00:00:00"
+    },
+    {
+        "reviewId": 15,
+        "destination": "Machu Picchu",
+        "country": "Peru",
+        "city": "Cusco",
+        "address": "789 Inca Trail",
+        "userName": "Adventurer123",
+        "rating": 9,
+        "description": "A once-in-a-lifetime experience. The ancient ruins are awe-inspiring!",
+        "date": "2023-05-30T00:00:00"
+    },
+    {
+        "reviewId": 19,
+        "destination": "Machu Picchu",
+        "country": "Peru",
+        "city": "Cusco",
+        "address": "789 Inca Trail",
+        "userName": "MountainHiker",
+        "rating": 9,
+        "description": "A challenging hike to reach the ancient ruins, but the view from the Sun Gate was worth it!",
+        "date": "2022-08-05T00:00:00"
+    }
+]
+``
+* _To make a call returning the first page of reviews, with 2 reviews listed per page:_
+http://localhost:5000/api/reviews/?pageNumber=1&pageSize=2
+``
+[
+    {
+        "reviewId": 1,
+        "destination": "Waikiki Beach",
+        "country": "United States",
+        "city": "Honolulu",
+        "address": "123 Beach st",
+        "userName": "Mr_ReviewGuy",
+        "rating": 9,
+        "description": "Lovely vacation destination with great weather. No spiders at all!",
+        "date": "2019-12-25T00:00:00"
+    },
+    {
+        "reviewId": 2,
+        "destination": "Coronado",
+        "country": "United States",
+        "city": "San Diego",
+        "address": null,
+        "userName": "Marcus",
+        "rating": 7,
+        "description": "Sunny San Diego offers a perfect blend of beach bliss and urban spiders",
+        "date": "2006-07-25T00:00:00"
+    }
+]
+``
 
 ## Additional Requirements for Post Request
-
+* _POST requests http://localhost:5000/api/reviews/ require JSON body formatting shown below._
+```
+{
+  "Destination": "Machu Picchu",
+  "Country": "Peru",
+  "City": "Cusco",
+  "Address": "789 Inca Trail"
+  "UserName": "Mr.Review",
+  "Rating": 8,
+  "Description": "A challenging hike to reach the ancient ruins, but the view from the Sun Gate was worth it!",
+  "Date": new DateTime(2022, 08, 05)
+}
+```
 
 ## Additional Requirements for Put Request
-
+* _PUT requests http://localhost:5000/api/reviews/{id} require JSON body formatting shown below._
+```
+{
+  "ReviewId": 1,
+  "Destination": "Machu Picchu",
+  "Country": "Peru",
+  "City": "Cusco",
+  "Address": "789 Inca Trail"
+  "UserName": "Mr.Review",
+  "Rating": 8,
+  "Description": "A challenging hike to reach the ancient ruins, but the view from the Sun Gate was worth it!",
+  "Date": new DateTime(2022, 08, 05)
+}
+```
 
 ## Known Bugs
 
-* _Any known issues_
-* _should go here_
+* _No known issues as of 6/6/23_
 
 ## License
 
