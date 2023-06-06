@@ -19,7 +19,7 @@ namespace TravelApi.Controllers
 
     // GET api/reviews
     [HttpGet]
-    public async Task<List<Review>> Get(string city, string country, string userName, int minimumRating, string byRating)
+    public async Task<List<Review>> Get(string city, string country, string userName, int minimumRating, string byRating, int pageNumber = 1, int pageSize = 100)
     {
       IQueryable<Review> query = _db.Reviews.AsQueryable();
       // how do we query by number of reviews without using another model/database join table?
@@ -49,6 +49,10 @@ namespace TravelApi.Controllers
         query = query.Where(entry => entry.Rating >= minimumRating);
       }
 
+      query.OrderBy(review => review.ReviewId)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize); 
+
       return await query.ToListAsync();
     }
 
@@ -66,18 +70,18 @@ namespace TravelApi.Controllers
       return review;
     }
 
-    [HttpGet("page")]
-    public async Task<ActionResult<List<Review>>> GetReviews(int pageNumber = 1, int pageSize = 5 )
-    {
-      List<Review> reviews = await _db.Reviews
-        .OrderBy(review => review.ReviewId)
-        .Skip((pageNumber - 1) * pageSize)
-        .Take(pageSize)
-        .ToListAsync();
+    // [HttpGet("page")]
+    // public async Task<ActionResult<List<Review>>> GetReviews(int pageNumber = 1, int pageSize = 5 )
+    // {
+    //   List<Review> reviews = await _db.Reviews
+    //     .OrderBy(review => review.ReviewId)
+    //     .Skip((pageNumber - 1) * pageSize)
+    //     .Take(pageSize)
+    //     .ToListAsync();
 
-      return reviews;
-      // /api/reviews/page?pageNumber=1&pageSize=10
-    }
+    //   return reviews;
+    //   // /api/reviews/page?pageNumber=1&pageSize=10
+    // }
 
     // POST: api/reviews
     [HttpPost]
