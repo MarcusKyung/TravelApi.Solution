@@ -26,7 +26,7 @@
 
 ## Description
 
-_TravelAPI is an API used to track reviews for travel destinations around the world. The starting database is seeded with data for 20 reviews but the API supports full CRUD functionality to store additional reviews and to edit and delete existing ones. Reviews are queryable by destination, city, country, user, rating, and page number. This project was built using C#, Entity Framework Core, and MySQL._
+_TravelAPI is an API used to track reviews for travel destinations around the world. The starting database is seeded with data for 20 reviews but the API supports full CRUD functionality to store additional reviews and to edit and delete existing ones. Reviews are queryable by destination, city, country, user, and rating. TravelApi v2 also supports pagination and querying results by page number and page size. This project was built using C#, Entity Framework Core, and MySQL._
 
 ## Setup/Installation Requirements
 
@@ -54,13 +54,14 @@ _TravelAPI is an API used to track reviews for travel destinations around the wo
 
 ## Endpoints
 ```
-GET http://localhost:5000/api/reviews/
-GET http://localhost:5000/api/reviews/{id}
-POST http://localhost:5000/api/reviews/
-PUT http://localhost:5000/api/reviews/{id}
-DELETE http://localhost:5000/api/reviews/{id}
+GET http://localhost:5000/api/{v1/v2}/reviews/
+GET http://localhost:5000/api/{v1/v2}/reviews/{id}
+POST http://localhost:5000/api/{v1/v2}/reviews/
+PUT http://localhost:5000/api/{v1/v2}/reviews/{id}
+DELETE http://localhost:5000/api/{v1/v2}/reviews/{id}
 ```
 Note: `{id}` is a variable and it should be replaced with the id number of the review you want to GET, PUT, or DELETE.
+Note: `{v1/v2}` indicates the version of the API you want to use. Version 2 contains all functionality of version 1 but also includes pagination for Get results.
 
 ## Optional Query String Parameters
 | Parameter   | Type        |  Required    | Description |
@@ -79,7 +80,7 @@ Note: `{id}` is a variable and it should be replaced with the id number of the r
 
 ## Example Get Requests
 * _To make an Api call for all reviews for destinations in Peru:_
-http://localhost:5000/api/reviews/?country=peru
+http://localhost:5000/api/{v1/v2}/reviews/?country=peru
 ``
 [
     {
@@ -118,7 +119,7 @@ http://localhost:5000/api/reviews/?country=peru
 ]
 ``
 * _To make a call returning the first page of reviews, with 2 reviews listed per page:_
-http://localhost:5000/api/reviews/?pageNumber=1&pageSize=2
+http://localhost:5000/api/{v1/v2}/reviews/?pageNumber=1&pageSize=2
 ``
 [
     {
@@ -147,7 +148,7 @@ http://localhost:5000/api/reviews/?pageNumber=1&pageSize=2
 ``
 
 ## Additional Requirements for Post Request
-* _POST requests http://localhost:5000/api/reviews/ require JSON body formatting shown below._
+* _POST requests http://localhost:5000/api/{v1/v2}/reviews/ require JSON body formatting shown below._
 ```
 {
   "Destination": "Machu Picchu",
@@ -162,7 +163,7 @@ http://localhost:5000/api/reviews/?pageNumber=1&pageSize=2
 ```
 
 ## Additional Requirements for Put Request
-* _PUT requests http://localhost:5000/api/reviews/{id} require JSON body formatting shown below._
+* _PUT requests http://localhost:5000/api/{v1/v2}/reviews/{id} require JSON body formatting shown below._
 ```
 {
   "ReviewId": 1,
