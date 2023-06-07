@@ -61,10 +61,6 @@ namespace TravelApi.Controllers.v2
         query = query.Skip((pageNumber - 1) * pageSize).Take(pageSize); 
       }
 
-      // query = query.OrderBy(review => review.ReviewId)
-      //         .Skip((pageNumber - 1) * pageSize)
-      //         .Take(pageSize); 
-
       return await query.ToListAsync();
     }
 
@@ -89,19 +85,6 @@ namespace TravelApi.Controllers.v2
       int random = new Random().Next(reviews.Count);
       return reviews[random];
     }
-
-    // [HttpGet("page")]
-    // public async Task<ActionResult<List<Review>>> GetReviews(int pageNumber = 1, int pageSize = 5 )
-    // {
-    //   List<Review> reviews = await _db.Reviews
-    //     .OrderBy(review => review.ReviewId)
-    //     .Skip((pageNumber - 1) * pageSize)
-    //     .Take(pageSize)
-    //     .ToListAsync();
-
-    //   return reviews;
-    //   // /api/reviews/page?pageNumber=1&pageSize=10
-    // }
 
     // POST: api/reviews
     [HttpPost]

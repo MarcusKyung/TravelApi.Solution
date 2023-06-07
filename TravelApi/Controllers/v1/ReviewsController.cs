@@ -4,6 +4,7 @@ using TravelApi.Models;
 using System.Collections.Generic;
 using System.Linq;
 
+
 namespace TravelApi.Controllers.v1
 {
   [ApiController]
@@ -55,16 +56,105 @@ namespace TravelApi.Controllers.v1
         query = query.Where(entry => entry.Rating >= minimumRating);
       }
 
-      if (pageNumber > 0 && pageSize > 0)
-      {
-        query = query.Skip((pageNumber - 1) * pageSize).Take(pageSize); 
-      }
-
       // query = query.OrderBy(review => review.ReviewId)
       //         .Skip((pageNumber - 1) * pageSize)
       //         .Take(pageSize); 
 
       return await query.ToListAsync();
+    }
+
+    // GET: api/Reviews/5
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Review>> GetReview(int id)
+    {
+      Review review = await _db.Reviews.FindAsync(id);
+
+      if (review == null)
+      {
+        return NotFound();
+      }
+
+      return review;
+    }
+
+    [HttpGet("random")]
+    public async Task<ActionResult<Review>> GetRandomReview()
+    {
+      List<Review> reviews = await _db.Reviews.ToListAsync();
+      int random = new Random().Next(reviews.Count);
+      return reviews[random];
+    }
+
+    // [HttpGet("page")]
+    // public async Task<ActionResult<List<Review>>> GetReviews(int pageNumber = 1, int pageSize = 5 )
+    // {
+    //   List<Review> reviews = await _db.Reviews
+    //     .OrderBy(review => review.ReviewId)
+    //     .Skip((pageNumber - 1) * pageSize)
+    //     .Take(pageSize)
+    //     .ToListAsync();
+
+    //   return reviews;
+    //   // /api/reviews/page?pageNumber=1&pageSize=10
+    // }
+
+    // POST: api/reviews
+    [HttpPost]
+    public async Task<ActionResult<Review>> Post(Review review)
+    {
+      _db.Reviews.Add(review);
+      await _db.SaveChangesAsync();
+      return CreatedAtAction(nameof(GetReview), new { id = review.ReviewId }, review);
+    }
+
+    // PUT: api/Reviews/5
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Put(int id, Review review)
+    {
+      if (id != review.ReviewId)
+      {
+        return BadRequest();
+      }
+
+      _db.Reviews.Update(review);
+
+      try
+      {
+        await _db.SaveChangesAsync();
+      }
+      catch (DbUpdateConcurrencyException)
+      {
+        if (!ReviewExists(id))
+        {
+          return NotFound();
+        }
+        else
+        {
+          throw;
+        }
+      }
+
+      return NoContent();
+    }
+
+    private bool ReviewExists(int id)
+    {
+      return _db.Reviews.Any(e => e.ReviewId == id);
+    }
+
+    // DELETE: api/Reviews/5
+    [HttpDelete("{id}")]
+    public async Task<IActionResult>DeleteReview(int id)
+    {
+      Review review = await _db.Reviews.FindAsync(id);
+      if (review == null)
+      {
+        return NotFound();
+      }
+      _db.Reviews.Remove(review);
+      await _db.SaveChangesAsync();
+
+      return NoContent();
     }
   } 
 }
