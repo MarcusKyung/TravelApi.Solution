@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using TravelApi.Models;
 using System.Collections.Generic;
 using System.Linq;
-
+using Microsoft.AspNetCore.Cors;
 
 namespace TravelApi.Controllers.v2
 {
@@ -21,6 +21,7 @@ namespace TravelApi.Controllers.v2
 
     // GET api/reviews
     [HttpGet]
+    [EnableCors("Policy1")]
     public async Task<List<Review>> Get(string destination, string city, string country, string userName, int minimumRating, string byRating, int pageNumber, int pageSize)
     {
       IQueryable<Review> query = _db.Reviews.AsQueryable();

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using TravelApi.Models;
 using System.Collections.Generic;
 using System.Linq;
-
+using Microsoft.AspNetCore.Cors;
 
 namespace TravelApi.Controllers.v1
 {

@@ -5,6 +5,17 @@ using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Policy1",
+        policy =>
+        {
+            policy.WithOrigins("http://example.com",
+                                "http://www.contoso.com",
+                                "http://cors-test.codehappy.dev");
+        });
+    });
+
 builder.Services.AddControllers();
 
 builder.Services.AddDbContext<TravelApiContext>(
@@ -65,6 +76,7 @@ if (app.Environment.IsDevelopment())
         }
     });
 }
+app.UseCors();
 
 app.UseStaticFiles();
 
