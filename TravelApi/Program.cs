@@ -7,25 +7,24 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("Policy1",
+    options.AddPolicy("AllowAllOrigins",
         policy =>
         {
-            policy.WithOrigins("http://example.com",
-                                "http://www.contoso.com",
-                                "http://cors-test.codehappy.dev");
+            policy.AllowAnyOrigin();
+            policy.AllowAnyHeader();
+            policy.AllowAnyMethod();
         });
-    });
+});
 
 builder.Services.AddControllers();
 
 builder.Services.AddDbContext<TravelApiContext>(
-                  dbContextOptions => dbContextOptions
-                    .UseMySql(
-                      builder.Configuration["ConnectionStrings:DefaultConnection"], 
-                      ServerVersion.AutoDetect(builder.Configuration["ConnectionStrings:DefaultConnection"]
-                    )
-                  )
-                );
+    dbContextOptions => dbContextOptions
+        .UseMySql(
+            builder.Configuration["ConnectionStrings:DefaultConnection"],
+            ServerVersion.AutoDetect(builder.Configuration["ConnectionStrings:DefaultConnection"])
+        )
+);
 
 builder.Services.AddVersionedApiExplorer(setup =>
 {
@@ -33,19 +32,18 @@ builder.Services.AddVersionedApiExplorer(setup =>
     setup.SubstituteApiVersionInUrl = true;
 });
 
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddApiVersioning(opt =>
-                                    {
-                                        opt.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1,0);
-                                        opt.AssumeDefaultVersionWhenUnspecified = true;
-                                        opt.ReportApiVersions = true;
-                                        opt.ApiVersionReader = ApiVersionReader.Combine(new UrlSegmentApiVersionReader(),
-                                                                                        new HeaderApiVersionReader("x-api-version"),
-                                                                                        new MediaTypeApiVersionReader("x-api-version"));
-                                    });
+{
+    opt.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1, 0);
+    opt.AssumeDefaultVersionWhenUnspecified = true;
+    opt.ReportApiVersions = true;
+    opt.ApiVersionReader = ApiVersionReader.Combine(new UrlSegmentApiVersionReader(),
+        new HeaderApiVersionReader("x-api-version"),
+        new MediaTypeApiVersionReader("x-api-version"));
+});
 
 // Add ApiExplorer to discover versions
 builder.Services.AddVersionedApiExplorer(setup =>
@@ -76,14 +74,11 @@ if (app.Environment.IsDevelopment())
         }
     });
 }
-app.UseCors();
+
+app.UseCors("AllowAllOrigins"); // Use the permissive CORS policy
 
 app.UseStaticFiles();
-
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();
